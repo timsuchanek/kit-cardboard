@@ -154,7 +154,8 @@ socket.on('key', function(key) {
   function tweenY(n) {
     var position = { x : cube.position.x, y: cube.position.y };
     var target = { x : cube.position.x, y: cube.position.y + n };
-    var tween = new TWEEN.Tween(position).to(target, 500);
+    var tween = new TWEEN.Tween(position).to(target, 400);
+    // tween.easing(TWEEN.Easing.Elastic.InOut);
     tween.onUpdate(function () {
       cube.position.y = position.y;
     });
@@ -164,7 +165,8 @@ socket.on('key', function(key) {
   function tweenX(n) {
     var position = { x : cube.position.x, y: cube.position.y };
     var target = { x : cube.position.x + n, y: cube.position.y };
-    var tween = new TWEEN.Tween(position).to(target, 500);
+    var tween = new TWEEN.Tween(position).to(target, 400);
+    // tween.easing(TWEEN.Easing.Elastic.InOut);
     tween.onUpdate(function () {
       cube.position.x = position.x;
     });
