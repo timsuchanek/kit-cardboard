@@ -112,6 +112,7 @@ function animate(t) {
 
   update(clock.getDelta());
   render(clock.getDelta());
+  TWEEN.update();
 }
 
 function fullscreen() {
@@ -136,17 +137,37 @@ socket.on('key', function(key) {
 
   switch (key.code) {
     case ARROW_UP:
-      cube.position.y += 5;
+      tweenY(5);
       break;
     case ARROW_DOWN:
-      cube.position.y -= 5;
+      tweenY(-5);
       break;
     case ARROW_LEFT:
-      cube.position.x -= 5;
+      tweenX(5);
       break;
     case ARROW_RIGHT:
-      cube.position.x += 5;
+      tweenX(-5);
       break;
     default:
+  }
+
+  function tweenY(n) {
+    var position = { x : cube.position.x, y: cube.position.y };
+    var target = { x : cube.position.x, y: cube.position.y + n };
+    var tween = new TWEEN.Tween(position).to(target, 500);
+    tween.onUpdate(function () {
+      cube.position.y = position.y;
+    });
+    tween.start();
+  }
+
+  function tweenX(n) {
+    var position = { x : cube.position.x, y: cube.position.y };
+    var target = { x : cube.position.x + n, y: cube.position.y };
+    var tween = new TWEEN.Tween(position).to(target, 500);
+    tween.onUpdate(function () {
+      cube.position.x = position.x;
+    });
+    tween.start();
   }
 });
