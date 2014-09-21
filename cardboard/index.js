@@ -222,13 +222,13 @@ socket.on('keydown', function(key) {
         vecToAdd = dir;
         break;
       case A:
-        camera.position.y -= 1;
+        vecToAdd = new THREE.Vector3().crossVectors(dir, camera.up).normalize().negate();
         break;
       case S:
-        vecToAdd = dir.clone().negate().normalize();
+        vecToAdd = dir.clone().negate();
         break;
       case D:
-        camera.position.y += 1;
+        vecToAdd = new THREE.Vector3().crossVectors(dir, camera.up).normalize();
         break;
       default:
     }
