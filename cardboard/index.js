@@ -21,30 +21,30 @@ function init() {
   camera.position.set(0, 10, 0);
   scene.add(camera);
 
-  controls = new THREE.OrbitControls(camera, element);
-  controls.rotateUp(Math.PI / 4);
-  controls.target.set(
-    camera.position.x + 0.1,
-    camera.position.y,
-    camera.position.z
-  );
-  controls.noZoom = true;
-  controls.noPan = true;
+  //controls = new THREE.OrbitControls(camera, element);
+  //controls.rotateUp(Math.PI / 4);
+  //controls.target.set(
+  //camera.position.x + 0.1,
+  //camera.position.y,
+  //camera.position.z
+  //);
+  //controls.noZoom = true;
+  //controls.noPan = true;
 
-  function setOrientationControls(e) {
-    if (!e.alpha) {
-      return;
-    }
+  //function setOrientationControls(e) {
+  //if (!e.alpha) {
+  //return;
+  //}
 
-    controls = new THREE.DeviceOrientationControls(camera, true);
-    controls.connect();
-    controls.update();
+  controls = new THREE.DeviceOrientationControls(camera, true);
+  controls.connect();
+  controls.update();
 
-    element.addEventListener('click', fullscreen, false);
+  element.addEventListener('click', fullscreen, false);
 
-    window.removeEventListener('deviceorientation', setOrientationControls);
-  }
-  window.addEventListener('deviceorientation', setOrientationControls, true);
+  //window.removeEventListener('deviceorientation', setOrientationControls);
+  //}
+  //window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
   var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
@@ -252,10 +252,17 @@ socket.on('keydown', function(key) {
 socket.on('keydown', function(key) {
 
   var SPACE = 32;
+  var R = 82;
 
-  if (key.code === SPACE) {
-    camera.position.set(0, 10, 0);
-    cube.position.set(20, 5, 20);
+  switch (key.code) {
+    case SPACE:
+      camera.position.set(0, 10, 0);
+      cube.position.set(20, 5, 20);
+      break;
+    case R:
+      location.reload();
+      break;
+    default:
   }
 
 });
