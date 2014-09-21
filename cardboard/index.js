@@ -74,8 +74,8 @@ function init() {
 
 
   cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
-  cube.position.y = 5;
   cube.position.x = 20;
+  cube.position.y = 5;
   cube.position.z = 20;
 
   scene.add(cube);
@@ -245,6 +245,17 @@ socket.on('keydown', function(key) {
       }
     }
 
+  }
+
+});
+
+socket.on('keydown', function(key) {
+
+  var SPACE = 32;
+
+  if (key.code === SPACE) {
+    camera.position.set(0, 10, 0);
+    cube.position.set(20, 5, 20);
   }
 
 });
