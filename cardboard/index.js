@@ -21,30 +21,9 @@ function init() {
   camera.position.set(0, 10, 0);
   scene.add(camera);
 
-  //controls = new THREE.OrbitControls(camera, element);
-  //controls.rotateUp(Math.PI / 4);
-  //controls.target.set(
-  //camera.position.x + 0.1,
-  //camera.position.y,
-  //camera.position.z
-  //);
-  //controls.noZoom = true;
-  //controls.noPan = true;
-
-  //function setOrientationControls(e) {
-  //if (!e.alpha) {
-  //return;
-  //}
-
   controls = new THREE.DeviceOrientationControls(camera, true);
   controls.connect();
   controls.update();
-
-  element.addEventListener('click', fullscreen, false);
-
-  //window.removeEventListener('deviceorientation', setOrientationControls);
-  //}
-  //window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
   var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
@@ -72,7 +51,6 @@ function init() {
   mesh.rotation.x = -Math.PI / 2;
   scene.add(mesh);
 
-
   cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
   cube.position.x = 20;
   cube.position.y = 5;
@@ -80,6 +58,7 @@ function init() {
 
   scene.add(cube);
 
+  element.addEventListener('click', fullscreen, false);
   window.addEventListener('resize', resize, false);
   setTimeout(resize, 1);
 }
@@ -233,17 +212,16 @@ socket.on('keydown', function(key) {
       default:
     }
 
-    var shiftCamera = shiftCameraByVector.bind(this, vecToAdd);
-
     cameraIsMoving = true;
-    shiftCamera();
 
-    function shiftCameraByVector(vec) {
-      camera.position.add(vec);
+    var shiftCamera = function() {
+      camera.position.add(vecToAdd);
       if (cameraIsMoving) {
         requestAnimationFrame(shiftCamera);
       }
-    }
+    };
+
+    shiftCamera();
 
   }
 
