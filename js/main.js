@@ -73,7 +73,7 @@ function init() {
   scene.add(mesh);
 
 
-  cube = new THREE.Mesh( new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial() );
+  cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
   cube.position.y = 5;
   cube.position.x = 20;
   cube.position.z = 20;
@@ -129,7 +129,8 @@ function fullscreen() {
 
 
 var socket = io();
-socket.on('key', function(key) {
+
+socket.on('keydown', function(key) {
   var ARROW_LEFT = 37;
   var ARROW_RIGHT = 39;
   var ARROW_UP = 38;
@@ -152,24 +153,98 @@ socket.on('key', function(key) {
   }
 
   function tweenY(n) {
-    var position = { x : cube.position.x, y: cube.position.y };
-    var target = { x : cube.position.x, y: cube.position.y + n };
+    var position = {
+      x: cube.position.x,
+      y: cube.position.y
+    };
+    var target = {
+      x: cube.position.x,
+      y: cube.position.y + n
+    };
     var tween = new TWEEN.Tween(position).to(target, 400);
     // tween.easing(TWEEN.Easing.Elastic.InOut);
-    tween.onUpdate(function () {
+    tween.onUpdate(function() {
       cube.position.y = position.y;
     });
     tween.start();
   }
 
   function tweenX(n) {
-    var position = { x : cube.position.x, y: cube.position.y };
-    var target = { x : cube.position.x + n, y: cube.position.y };
+    var position = {
+      x: cube.position.x,
+      y: cube.position.y
+    };
+    var target = {
+      x: cube.position.x + n,
+      y: cube.position.y
+    };
     var tween = new TWEEN.Tween(position).to(target, 400);
     // tween.easing(TWEEN.Easing.Elastic.InOut);
-    tween.onUpdate(function () {
+    tween.onUpdate(function() {
       cube.position.x = position.x;
     });
     tween.start();
   }
+
+});
+
+var cameraIsMoving = false;
+
+socket.on('keyup', function(key) {
+
+  var W = 87;
+  var A = 65;
+  var S = 83;
+  var D = 68;
+
+  if ([W, A, S, D].indexOf(key.code) !== -1) {
+    cameraIsMoving = false;
+  }
+
+});
+
+socket.on('keydown', function(key) {
+
+  var W = 87;
+  var A = 65;
+  var S = 83;
+  var D = 68;
+
+  if (!cameraIsMoving && [W, A, S, D].indexOf(key.code) !== -1) {
+
+    var pLocal = new THREE.Vector3(0, 0, -1);
+    var pWorld = pLocal.applyMatrix4(camera.matrixWorld);
+    var dir = pWorld.sub(camera.position).normalize();
+    var vecToAdd;
+
+    switch (key.code) {
+      case W:
+        vecToAdd = dir;
+        break;
+      case A:
+        camera.position.y -= 1;
+        break;
+      case S:
+        vecToAdd = dir.clone().negate().normalize();
+        break;
+      case D:
+        camera.position.y += 1;
+        break;
+      default:
+    }
+
+    var shiftCamera = shiftCameraByVector.bind(this, vecToAdd);
+
+    cameraIsMoving = true;
+    shiftCamera();
+
+    function shiftCameraByVector(vec) {
+      camera.position.add(vec);
+      if (cameraIsMoving) {
+        requestAnimationFrame(shiftCamera);
+      }
+    }
+
+  }
+
 });
