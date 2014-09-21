@@ -18,7 +18,7 @@ function init() {
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
-  camera.position.set(0, 10, 0);
+  camera.position.set(0, 10, -10);
   scene.add(camera);
 
   controls = new THREE.DeviceOrientationControls(camera, true);
@@ -38,7 +38,7 @@ function init() {
   texture.anisotropy = renderer.getMaxAnisotropy();
 
   var material = new THREE.MeshPhongMaterial({
-    color: 0xff00ff,
+    color: 0xffffff,
     specular: 0xffffff,
     shininess: 20,
     shading: THREE.FlatShading,
@@ -52,9 +52,7 @@ function init() {
   scene.add(mesh);
 
   cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
-  cube.position.x = 20;
-  cube.position.y = 5;
-  cube.position.z = 20;
+  cube.position.set(0, 15, 10);
 
   scene.add(cube);
 
@@ -234,8 +232,8 @@ socket.on('keydown', function(key) {
 
   switch (key.code) {
     case SPACE:
-      camera.position.set(0, 10, 0);
-      cube.position.set(20, 5, 20);
+      camera.position.set(0, 10, -10);
+      cube.position.set(0, 15, 10);
       break;
     case R:
       location.reload();
