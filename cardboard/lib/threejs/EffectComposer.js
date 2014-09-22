@@ -29,11 +29,6 @@ THREE.EffectComposer = function(renderer, renderTarget) {
 
   this.passes = [];
 
-  if (THREE.CopyShader === undefined)
-    console.error("THREE.EffectComposer relies on THREE.CopyShader");
-
-  this.copyPass = new THREE.ShaderPass(THREE.CopyShader);
-
 };
 
 THREE.EffectComposer.prototype = {
@@ -52,18 +47,10 @@ THREE.EffectComposer.prototype = {
 
   },
 
-  insertPass: function(pass, index) {
-
-    this.passes.splice(index, 0, pass);
-
-  },
-
   render: function(delta) {
 
     this.writeBuffer = this.renderTarget1;
     this.readBuffer = this.renderTarget2;
-
-    var maskActive = false;
 
     var pass, i, il = this.passes.length;
 
@@ -77,33 +64,11 @@ THREE.EffectComposer.prototype = {
         pass.renderToScreen = true;
       }
 
-      pass.render(this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive);
+      pass.render(this.renderer, this.writeBuffer, this.readBuffer, delta);
 
       if (pass.needsSwap) {
 
-        if (maskActive) {
-
-          var context = this.renderer.context;
-
-          context.stencilFunc(context.NOTEQUAL, 1, 0xffffffff);
-
-          this.copyPass.render(this.renderer, this.writeBuffer, this.readBuffer, delta);
-
-          context.stencilFunc(context.EQUAL, 1, 0xffffffff);
-
-        }
-
         this.swapBuffers();
-
-      }
-
-      if (pass instanceof THREE.MaskPass) {
-
-        maskActive = true;
-
-      } else if (pass instanceof THREE.ClearMaskPass) {
-
-        maskActive = false;
 
       }
 

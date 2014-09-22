@@ -60,23 +60,13 @@ function resize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(width, height);
-  //effect.setSize(width, height);
-}
-
-function update() {
-  resize();
-  TWEEN.update();
-  camera.updateProjectionMatrix();
-  controls.update();
 }
 
 function animate(t) {
-  requestAnimationFrame(animate);
-
   composer.render();
-
-  update();
-  //effect.render(scene, camera);
+  TWEEN.update();
+  controls.update();
+  requestAnimationFrame(animate);
 }
 
 function fullscreen() {
@@ -98,9 +88,7 @@ function addLight() {
 
 function addPlane() {
 
-  var texture = THREE.ImageUtils.loadTexture(
-    'textures/patterns/checker.png'
-  );
+  var texture = THREE.ImageUtils.loadTexture('textures/patterns/checker.png');
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat = new THREE.Vector2(50, 50);
