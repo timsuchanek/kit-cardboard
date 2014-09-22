@@ -49,7 +49,7 @@ THREE.DeviceOrientationControls = function(object) {
   var v0 = new THREE.Vector3(0, 0, 0);
   var euler = new THREE.Euler();
   var q0 = new THREE.Quaternion(); // - PI/2 around the x-axis
-  var q1 = new THREE.Quaternion(- Math.sqrt(0.5), 0, 0, Math.sqrt(0.5));
+  var q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5));
 
   this.deviceOrientation = {};
   this.screenOrientation = window.orientation || 0;
@@ -84,14 +84,14 @@ THREE.DeviceOrientationControls = function(object) {
 
   }).bind(this);
 
-  this.update = function(delta) {
+  this.update = function() {
 
     return function() {
 
       if (this.freeze) return;
 
       // should not need this
-      var orientation = getOrientation(); 
+      var orientation = getOrientation();
       if (orientation !== this.screenOrientation) {
         this.screenOrientation = orientation;
         this.autoAlign = true;
@@ -110,7 +110,7 @@ THREE.DeviceOrientationControls = function(object) {
       // form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
 
       // 'ZXY' for the device, but 'YXZ' for us
-      euler.set(this.beta, this.alpha, - this.gamma, 'YXZ');
+      euler.set(this.beta, this.alpha, -this.gamma, 'YXZ');
 
       quaternion.setFromEuler(euler);
       quaternionLerp.slerp(quaternion, 0.5); // interpolate
@@ -123,7 +123,7 @@ THREE.DeviceOrientationControls = function(object) {
       this.orientationQuaternion.multiply(q1);
 
       // adjust for screen orientation
-      this.orientationQuaternion.multiply(q0.setFromAxisAngle(zee, - this.orient));
+      this.orientationQuaternion.multiply(q0.setFromAxisAngle(zee, -this.orient));
 
       this.object.quaternion.copy(this.alignQuaternion);
       this.object.quaternion.multiply(this.orientationQuaternion);
@@ -160,13 +160,13 @@ THREE.DeviceOrientationControls = function(object) {
 
     tempVector3
       .set(0, 0, -1)
-      .applyQuaternion( tempQuaternion.copy(this.orientationQuaternion).inverse(), 'ZXY' );
+      .applyQuaternion(tempQuaternion.copy(this.orientationQuaternion).inverse(), 'ZXY');
 
     tempEuler.setFromQuaternion(
       tempQuaternion.setFromRotationMatrix(
         tempMatrix4.lookAt(tempVector3, v0, up)
-     )
-   );
+      )
+    );
 
     tempEuler.set(0, tempEuler.y, 0);
     this.alignQuaternion.setFromEuler(tempEuler);
@@ -198,4 +198,3 @@ THREE.DeviceOrientationControls = function(object) {
 
 
 };
-

@@ -1,23 +1,24 @@
-var camera, scene, renderer;
-var effect, controls;
-var element, container;
-var cube;
-var clock = new THREE.Clock();
+var camera, scene, renderer, controls, element, composer, cube;
 
 init();
 animate();
 
 function init() {
-  renderer = new THREE.WebGLRenderer();
-  element = renderer.domElement;
-  container = document.getElementById('example');
-  container.appendChild(element);
 
-  effect = new THREE.StereoEffect(renderer);
+  // renderer
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+  element = renderer.domElement;
+  //renderer.autoClear = false;
+
+
+  // camera & controls
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
+  camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
   camera.position.set(0, 10, -10);
   scene.add(camera);
 
@@ -26,8 +27,81 @@ function init() {
   controls.update();
 
 
+  // render steps
+
+  composer = new THREE.EffectComposer(renderer);
+  composer.addPass(new THREE.RenderPass(scene, camera));
+
+  composer.addPass(new THREE.StereoEffect(scene, camera));
+
+  var dotEffect = new THREE.ShaderPass(THREE.DotScreenShader);
+  dotEffect.uniforms['scale'].value = 4;
+  dotEffect.renderToScreen = true;
+  composer.addPass(dotEffect);
+
+
+  // scene objects
+
+  addLight();
+  addPlane();
+  addCube();
+
+
+  // event handlers
+
+  window.addEventListener('resize', resize, false);
+  //window.addEventListener('click', fullscreen, false);
+  window.addEventListener('click', function() {
+    location.reload();
+  }, false);
+
+}
+
+function resize() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
+  //effect.setSize(width, height);
+}
+
+function update() {
+  resize();
+  TWEEN.update();
+  camera.updateProjectionMatrix();
+  controls.update();
+}
+
+function animate(t) {
+  requestAnimationFrame(animate);
+
+  composer.render();
+
+  update();
+  //effect.render(scene, camera);
+}
+
+function fullscreen() {
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  }
+}
+
+function addLight() {
   var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
   scene.add(light);
+}
+
+function addPlane() {
 
   var texture = THREE.ImageUtils.loadTexture(
     'textures/patterns/checker.png'
@@ -51,59 +125,16 @@ function init() {
   mesh.rotation.x = -Math.PI / 2;
   scene.add(mesh);
 
+}
+
+function addCube() {
+
   cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
   cube.position.set(0, 15, 10);
 
   scene.add(cube);
 
-  element.addEventListener('click', fullscreen, false);
-  window.addEventListener('resize', resize, false);
-  setTimeout(resize, 1);
 }
-
-function resize() {
-  var width = container.offsetWidth;
-  var height = container.offsetHeight;
-
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-
-  // renderer.setSize(width, height);
-  effect.setSize(width, height);
-}
-
-function update(dt) {
-  resize();
-
-  camera.updateProjectionMatrix();
-
-  controls.update(dt);
-}
-
-function render(dt) {
-  effect.render(scene, camera);
-}
-
-function animate(t) {
-  requestAnimationFrame(animate);
-
-  update(clock.getDelta());
-  render(clock.getDelta());
-  TWEEN.update();
-}
-
-function fullscreen() {
-  if (container.requestFullscreen) {
-    container.requestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  } else if (container.mozRequestFullScreen) {
-    container.mozRequestFullScreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
-  }
-}
-
 
 var socket = io();
 

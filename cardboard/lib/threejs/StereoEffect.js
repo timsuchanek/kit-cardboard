@@ -4,77 +4,78 @@
  * @authod arodic / http://aleksandarrodic.com/
  */
 
-THREE.StereoEffect = function(renderer) {
+THREE.StereoEffect = function(scene, camera) {
 
-  // API
+
+  this.scene = scene;
+  this.camera = camera;
 
   this.separation = 3;
 
   // internals
 
-  var _width, _height;
+  this._position = new THREE.Vector3();
+  this._quaternion = new THREE.Quaternion();
+  this._scale = new THREE.Vector3();
 
-  var _position = new THREE.Vector3();
-  var _quaternion = new THREE.Quaternion();
-  var _scale = new THREE.Vector3();
+  this._cameraL = new THREE.PerspectiveCamera();
+  this._cameraR = new THREE.PerspectiveCamera();
 
-  var _cameraL = new THREE.PerspectiveCamera();
-  var _cameraR = new THREE.PerspectiveCamera();
+  this.enabled = true;
+  this.needsSwap = true;
+  this.clear = false;
 
-  // initialization
+};
 
-  renderer.autoClear = false;
+THREE.StereoEffect.prototype = {
 
-  this.setSize = function(width, height) {
+  render: function(renderer, writeBuffer, readBuffer) {
 
-    _width = width / 2;
-    _height = height;
-
-    renderer.setSize(width, height);
-
-  };
-
-  this.render = function(scene, camera) {
+    var width = window.innerWidth / 2;
+    var height = window.innerHeight;
 
     scene.updateMatrixWorld();
 
     if (camera.parent === undefined) camera.updateMatrixWorld();
 
-    camera.matrixWorld.decompose(_position, _quaternion, _scale);
+    camera.matrixWorld.decompose(this._position, this._quaternion, this._scale);
 
     // left
 
-    _cameraL.fov = camera.fov;
-    _cameraL.aspect = 0.5 * camera.aspect;
-    _cameraL.near = camera.near;
-    _cameraL.far = camera.far;
-    _cameraL.updateProjectionMatrix();
+    this._cameraL.fov = this.camera.fov;
+    this._cameraL.aspect = 0.5 * this.camera.aspect;
+    this._cameraL.near = this.camera.near;
+    this._cameraL.far = this.camera.far;
+    this._cameraL.updateProjectionMatrix();
 
-    _cameraL.position.copy(_position);
-    _cameraL.quaternion.copy(_quaternion);
-    _cameraL.translateX(-this.separation);
+    this._cameraL.position.copy(this._position);
+    this._cameraL.quaternion.copy(this._quaternion);
+    this._cameraL.translateX(-this.separation);
 
     // right
 
-    _cameraR.near = camera.near;
-    _cameraR.far = camera.far;
-    _cameraR.projectionMatrix = _cameraL.projectionMatrix;
+    this._cameraR.near = this.camera.near;
+    this._cameraR.far = this.camera.far;
+    this._cameraR.projectionMatrix = this._cameraL.projectionMatrix;
 
-    _cameraR.position.copy(_position);
-    _cameraR.quaternion.copy(_quaternion);
-    _cameraR.translateX(this.separation);
+    this._cameraR.position.copy(this._position);
+    this._cameraR.quaternion.copy(this._quaternion);
+    this._cameraR.translateX(this.separation);
 
-    //
 
-    renderer.setViewport(0, 0, _width * 2, _height);
-    renderer.clear();
+    //renderer.setViewport(0, 0, this._width * 2, this._height);
+    //renderer.clear();
 
-    renderer.setViewport(0, 0, _width, _height);
-    renderer.render(scene, _cameraL);
+    renderer.setViewport(0, 0, width, height);
+    //renderer.render(this.scene, this._cameraL);
+    renderer.render(this.scene, this._cameraL, writeBuffer, true);
 
-    renderer.setViewport(_width, 0, _width, _height);
-    renderer.render(scene, _cameraR);
+    //renderer.setViewport(width, 0, width, height);
+    //renderer.render(this.scene, this._cameraR);
+    //renderer.render(this.scene, this._cameraR, writeBuffer, true);
 
-  };
+    renderer.setViewport(0, 0, width * 2, height);
+    //renderer.clear();
+  }
 
 };
