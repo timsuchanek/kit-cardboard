@@ -63,19 +63,27 @@ THREE.StereoEffect.prototype = {
     this._cameraR.translateX(this.separation);
 
 
-    //renderer.setViewport(0, 0, this._width * 2, this._height);
-    //renderer.clear();
+    if (this.renderToScreen) {
 
-    renderer.setViewport(0, 0, width, height);
-    //renderer.render(this.scene, this._cameraL);
-    renderer.render(this.scene, this._cameraL, writeBuffer, true);
+      renderer.setViewport(0, 0, width * 2, height);
+      renderer.clear();
 
-    //renderer.setViewport(width, 0, width, height);
-    //renderer.render(this.scene, this._cameraR);
-    //renderer.render(this.scene, this._cameraR, writeBuffer, true);
+      renderer.setViewport(width, 0, width, height);
+      renderer.render(this.scene, this._cameraR);
 
-    renderer.setViewport(0, 0, width * 2, height);
-    //renderer.clear();
+      renderer.setViewport(0, 0, width, height);
+      renderer.render(this.scene, this._cameraL);
+
+    } else {
+
+      renderer.setViewport(0, 0, width, height);
+      renderer.render(this.scene, this._cameraL, writeBuffer, true);
+
+      //renderer.setViewport(width, 0, width, height);
+      //renderer.render(this.scene, this._cameraR, writeBuffer, false);
+
+    }
+
   }
 
 };

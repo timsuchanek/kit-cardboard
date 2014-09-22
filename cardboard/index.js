@@ -9,9 +9,10 @@ function init() {
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.autoClear = false;
+
   document.body.appendChild(renderer.domElement);
   element = renderer.domElement;
-  //renderer.autoClear = false;
 
 
   // camera & controls
@@ -30,14 +31,8 @@ function init() {
   // render steps
 
   composer = new THREE.EffectComposer(renderer);
-  composer.addPass(new THREE.RenderPass(scene, camera));
-
   composer.addPass(new THREE.StereoEffect(scene, camera));
-
-  var dotEffect = new THREE.ShaderPass(THREE.DotScreenShader);
-  dotEffect.uniforms['scale'].value = 4;
-  dotEffect.renderToScreen = true;
-  composer.addPass(dotEffect);
+  composer.addPass(new THREE.ShaderPass(THREE.BarrelDistortsionShader));
 
 
   // scene objects
