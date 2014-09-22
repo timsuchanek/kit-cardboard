@@ -1,4 +1,5 @@
 var camera, scene, renderer, controls, element, composer, cube;
+var barrelPassEnabled = false;
 
 init();
 animate();
@@ -32,7 +33,6 @@ function init() {
 
   composer = new THREE.EffectComposer(renderer);
   composer.addPass(new THREE.StereoPass(scene, camera));
-  composer.addPass(new THREE.ShaderPass(THREE.BarrelDistortsionShader));
 
 
   // scene objects
@@ -45,9 +45,12 @@ function init() {
   // event handlers
 
   window.addEventListener('resize', resize, false);
-  //window.addEventListener('click', fullscreen, false);
   window.addEventListener('click', function() {
-    location.reload();
+    if (window.innerWidth === screen.width && window.innerHeight === screen.height) {
+      location.reload();
+    } else {
+      fullscreen();
+    }
   }, false);
 
 }
@@ -60,6 +63,20 @@ function resize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(width, height);
+  composer.setSize();
+}
+
+function toggleBarrelPass() {
+
+  barrelPassEnabled = !barrelPassEnabled;
+
+  if (barrelPassEnabled) {
+    composer.addPass(new THREE.ShaderPass(THREE.BarrelDistortsionShader));
+  } else {
+    composer.popPass();
+  }
+
+
 }
 
 function animate(t) {
@@ -243,6 +260,7 @@ socket.on('keydown', function(key) {
 
   var SPACE = 32;
   var R = 82;
+  var B = 66;
 
   switch (key.code) {
     case SPACE:
@@ -251,6 +269,9 @@ socket.on('keydown', function(key) {
       break;
     case R:
       location.reload();
+      break;
+    case B:
+      toggleBarrelPass();
       break;
     default:
   }

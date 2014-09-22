@@ -26,9 +26,11 @@ THREE.EffectComposer.prototype = {
   },
 
   addPass: function(pass) {
-
     this.passes.push(pass);
+  },
 
+  popPass: function() {
+    this.passes.pop();
   },
 
   render: function() {
@@ -39,9 +41,7 @@ THREE.EffectComposer.prototype = {
 
       pass = this.passes[i];
 
-      if (i === il - 1) {
-        pass.renderToScreen = true;
-      }
+      pass.renderToScreen = (i === il - 1);
 
       pass.render(this.renderer, this.writeBufferL, this.writeBufferR, this.readBufferL, this.readBufferR);
 

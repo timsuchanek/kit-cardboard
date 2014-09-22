@@ -71,8 +71,8 @@ THREE.StereoPass.prototype = {
 
     } else {
 
-      //renderer.setViewport(0, 0, width, height);
-      //renderer.render(this.scene, this._cameraL, writeBufferL, true);
+      renderer.setViewport(0, 0, width, height);
+      renderer.render(this.scene, this._cameraL, writeBufferL, true);
 
       renderer.setViewport(width, 0, width, height);
       renderer.render(this.scene, this._cameraR, writeBufferR, true);

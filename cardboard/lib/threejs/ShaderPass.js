@@ -33,19 +33,16 @@ THREE.ShaderPass.prototype = {
     var width = window.innerWidth / 2;
     var height = window.innerHeight;
 
-    //renderer.setViewport(0, 0, width * 2, height);
-    //renderer.clear();
-
 
     this.uniforms[this.textureID].value = readBufferL;
 
-    renderer.setViewport(0, 0, width, height);
+    renderer.setViewport(-0.1 * width, -0.1 * height, 1.16 * width, 1.2 * height);
     renderer.render(this.scene, this.camera);
 
-    //this.uniforms[this.textureID].value = readBufferR;
+    this.uniforms[this.textureID].value = readBufferR;
 
-    //renderer.setViewport(width, 0, width, height);
-    //renderer.render(this.scene, this.camera);
+    renderer.setViewport(0.95 * width, -0.1 * height, 1.16 * width, 1.2 * height);
+    renderer.render(this.scene, this.camera);
 
   }
 
