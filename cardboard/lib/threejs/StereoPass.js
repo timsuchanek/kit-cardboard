@@ -4,7 +4,7 @@
  * @authod arodic / http://aleksandarrodic.com/
  */
 
-THREE.StereoEffect = function(scene, camera) {
+THREE.StereoPass = function(scene, camera) {
 
 
   this.scene = scene;
@@ -21,15 +21,11 @@ THREE.StereoEffect = function(scene, camera) {
   this._cameraL = new THREE.PerspectiveCamera();
   this._cameraR = new THREE.PerspectiveCamera();
 
-  this.enabled = true;
-  this.needsSwap = true;
-  this.clear = false;
-
 };
 
-THREE.StereoEffect.prototype = {
+THREE.StereoPass.prototype = {
 
-  render: function(renderer, writeBuffer, readBuffer) {
+  render: function(renderer, writeBufferL, writeBufferR, readBufferL, readBufferR) {
 
     var width = window.innerWidth / 2;
     var height = window.innerHeight;
@@ -62,7 +58,6 @@ THREE.StereoEffect.prototype = {
     this._cameraR.quaternion.copy(this._quaternion);
     this._cameraR.translateX(this.separation);
 
-
     if (this.renderToScreen) {
 
       renderer.setViewport(0, 0, width * 2, height);
@@ -76,11 +71,11 @@ THREE.StereoEffect.prototype = {
 
     } else {
 
-      renderer.setViewport(0, 0, width, height);
-      renderer.render(this.scene, this._cameraL, writeBuffer, true);
+      //renderer.setViewport(0, 0, width, height);
+      //renderer.render(this.scene, this._cameraL, writeBufferL, true);
 
-      //renderer.setViewport(width, 0, width, height);
-      //renderer.render(this.scene, this._cameraR, writeBuffer, false);
+      renderer.setViewport(width, 0, width, height);
+      renderer.render(this.scene, this._cameraR, writeBufferR, true);
 
     }
 

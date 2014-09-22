@@ -31,7 +31,7 @@ function init() {
   // render steps
 
   composer = new THREE.EffectComposer(renderer);
-  composer.addPass(new THREE.StereoEffect(scene, camera));
+  composer.addPass(new THREE.StereoPass(scene, camera));
   composer.addPass(new THREE.ShaderPass(THREE.BarrelDistortsionShader));
 
 
@@ -112,7 +112,7 @@ function addPlane() {
 
 function addCube() {
 
-  cube = new THREE.Mesh(new THREE.CubeGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
+  cube = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), new THREE.MeshNormalMaterial());
   cube.position.set(0, 15, 10);
 
   scene.add(cube);

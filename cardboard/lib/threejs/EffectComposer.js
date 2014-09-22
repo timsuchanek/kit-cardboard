@@ -2,32 +2,12 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-THREE.EffectComposer = function(renderer, renderTarget) {
+THREE.EffectComposer = function(renderer) {
 
   this.renderer = renderer;
-
-  if (renderTarget === undefined) {
-
-    var width = window.innerWidth || 1;
-    var height = window.innerHeight || 1;
-    var parameters = {
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
-      format: THREE.RGBFormat,
-      stencilBuffer: false
-    };
-
-    renderTarget = new THREE.WebGLRenderTarget(width, height, parameters);
-
-  }
-
-  this.renderTarget1 = renderTarget;
-  this.renderTarget2 = renderTarget.clone();
-
-  this.writeBuffer = this.renderTarget1;
-  this.readBuffer = this.renderTarget2;
-
   this.passes = [];
+
+  this.reset();
 
 };
 
@@ -35,9 +15,13 @@ THREE.EffectComposer.prototype = {
 
   swapBuffers: function() {
 
-    var tmp = this.readBuffer;
-    this.readBuffer = this.writeBuffer;
-    this.writeBuffer = tmp;
+    var tmpL = this.readBufferL;
+    this.readBufferL = this.writeBufferL;
+    this.writeBufferL = tmpL;
+
+    var tmpR = this.readBufferR;
+    this.readBufferR = this.writeBufferR;
+    this.writeBufferR = tmpR;
 
   },
 
@@ -47,10 +31,7 @@ THREE.EffectComposer.prototype = {
 
   },
 
-  render: function(delta) {
-
-    this.writeBuffer = this.renderTarget1;
-    this.readBuffer = this.renderTarget2;
+  render: function() {
 
     var pass, i, il = this.passes.length;
 
@@ -58,51 +39,41 @@ THREE.EffectComposer.prototype = {
 
       pass = this.passes[i];
 
-      if (!pass.enabled) continue;
-
       if (i === il - 1) {
         pass.renderToScreen = true;
       }
 
-      pass.render(this.renderer, this.writeBuffer, this.readBuffer, delta);
+      pass.render(this.renderer, this.writeBufferL, this.writeBufferR, this.readBufferL, this.readBufferR);
 
-      if (pass.needsSwap) {
-
-        this.swapBuffers();
-
-      }
+      this.swapBuffers();
 
     }
 
   },
 
-  reset: function(renderTarget) {
+  reset: function() {
 
-    if (renderTarget === undefined) {
+    var width = window.innerWidth / 2;
+    var height = window.innerHeight;
+    var parameters = {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBFormat,
+      stencilBufferL: false
+    };
 
-      renderTarget = this.renderTarget1.clone();
+    var renderTarget = new THREE.WebGLRenderTarget(width, height, parameters);
 
-      renderTarget.width = window.innerWidth;
-      renderTarget.height = window.innerHeight;
-
-    }
-
-    this.renderTarget1 = renderTarget;
-    this.renderTarget2 = renderTarget.clone();
-
-    this.writeBuffer = this.renderTarget1;
-    this.readBuffer = this.renderTarget2;
+    this.writeBufferL = renderTarget;
+    this.readBufferL = renderTarget.clone();
+    this.writeBufferR = renderTarget.clone();
+    this.readBufferR = renderTarget.clone();
 
   },
 
-  setSize: function(width, height) {
+  setSize: function() {
 
-    var renderTarget = this.renderTarget1.clone();
-
-    renderTarget.width = width;
-    renderTarget.height = height;
-
-    this.reset(renderTarget);
+    this.reset();
 
   }
 
